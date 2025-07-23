@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-“””
+"""
 Solana Gem Hunter Bot - FIXED VERSION
 Part 1: Core Imports and Dependencies
-“””
+"""
 
 import asyncio
 import aiohttp
