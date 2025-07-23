@@ -1817,12 +1817,94 @@ async def _send_gem_alert(self, user_id: int, gem: TokenData, context: ContextTy
             [InlineKeyboardButton("⏹️ Stop Alerts", callback_data="start_scan")]
         ]
         
+        # Current (BROKEN):
         await context.bot.send_message(
             chat_id=user_id,
             text=alert_text,
             parse_mode='Markdown',
             reply_markup=InlineKeyboardMarkup(keyboard),
-            disable_web_page_
+            disable_web_page_preview=True
+        )
+        
+        logger.info(f"✅ Alert sent to user {user_id} for {gem.symbol}")
+        
+    except Exception as e:
+        logger.error(f"Failed to send gem alert to {user_id}: {e}")
+        raise
+        
+
+async def _send_detailed_analysis(self, chat_id: int, token: TokenData, context: ContextTypes.DEFAULT_TYPE):
+        """Send comprehensive token analysis"""
+        try:
+            risk_colors = {"LOW": "🟢", "MEDIUM": "🟡", "HIGH": "🔴"}
+            risk_emoji = risk_colors.get(token.risk_level, "⚪")
+            
+            # Format risk factors (limit to top 3)
+            risk_factors = token.safety.risk_factors[:3] if token.safety.risk_factors else ["No major risks detected"]
+            risk_text = "\n".join([f"• {factor}" for factor in risk_factors])
+            
+            analysis_text = f"""
+📊 **Complete Token Analysis**
+
+🪙 **{token.symbol}** - {token.name}
+💎 **Gem Score:** {token.gem_score:.1f}/100
+
+📈 **Market Data:**
+- Market Cap: ${token.market_cap:,.0f}
+- Price: ${token.price:.8f}
+- 24h Volume: ${token.volume_24h:,.0f}
+- 24h Change: {token.price_change_24h:+.1f}%
+- Liquidity: ${token.liquidity:,.0f}
+- Est. Holders: ~{token.holders}
+- Token Age: {token.age_hours:.1f} hours
+
+🛡️ **Safety Analysis:**
+{risk_emoji} **Overall Risk:** {token.risk_level}
+🔢 **Risk Score:** {token.safety.risk_score}/100
+💸 **Can Sell:** {'Yes' if token.safety.can_sell else 'NO - WARNING!'}
+🍯 **Honeypot:** {'No' if not token.safety.is_honeypot else 'YES - AVOID!'}
+
+**Risk Factors:**
+{risk_text}
+
+🔗 **Contract:** `{token.contract_address}`
+
+[DexScreener](https://dexscreener.com/solana/{token.contract_address}) | [Birdeye](https://birdeye.so/token/{token.contract_address})
+
+⚠️ **Not financial advice. Always DYOR!**
+            """
+            
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=analysis_text,
+                parse_mode='Markdown',
+                disable_web_page_preview=True
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to send detailed analysis: {e}")
+
+    async def _send_error_message(self, update: Update, error_context: str):
+        """Send user-friendly error message"""
+        try:
+            error_text = f"""
+❌ **Oops! Something went wrong**
+
+*{error_context}*
+
+**What you can try:**
+- Wait a moment and try again
+- Check your internet connection
+- Use `/help` for command examples
+
+The bot is still running normally.
+            """
+            
+            await update.message.reply_text(error_text, parse_mode='Markdown')
+            
+        except Exception as e:
+            logger.error(f"Failed to send error message: {e}")
+
 ```
 
 “””
@@ -1835,8 +1917,25 @@ import sys
 import platform
 from pathlib import Path
 
+def create_gem_bot(token: str) -> FixedTelegramGemBot:
+    """Create and validate bot instance"""
+    try:
+        if not token or len(token) < 20:
+            raise ValueError("Invalid bot token provided")
+        
+        bot = FixedTelegramGemBot(token)
+        logger.info("✅ Bot instance created successfully")
+        return bot
+        
+    except Exception as e:
+        logger.error(f"Failed to create bot: {e}")
+        raise
+
+# BotManager class starts here
 class BotManager:
-“”“Manages bot lifecycle and configuration”””
+    """Manages bot lifecycle and configuration"""
+    # ... rest of the class
+
 
 ```
 def __init__(self):
