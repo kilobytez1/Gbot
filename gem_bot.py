@@ -20,7 +20,7 @@ from dataclasses import dataclass, field, asdict
 # Dependency validation
 
 def check_dependencies():
-“”“Check if required packages are installed”””
+    """Check if required packages are installed"""
 required_packages = {
 ‘telegram’: ‘python-telegram-bot>=20.0’,
 ‘aiohttp’: ‘aiohttp>=3.8.0’,
@@ -67,7 +67,7 @@ sys.exit(1)
 # Configure logging with error handling
 
 def setup_logging():
-“”“Setup logging with mobile-friendly configuration”””
+    """Setup logging with mobile-friendly configuration"""
 try:
 # Try to create log file, fallback to console only
 log_handlers = [logging.StreamHandler(sys.stdout)]
@@ -91,12 +91,12 @@ except Exception as e:
 ```
 
 setup_logging()
-logger = logging.getLogger(**name**)
+logger = logging.getLogger(__name__)
 
 # Mobile execution helper
 
 def enable_mobile_support():
-“”“Enable mobile execution support”””
+    """Enable mobile execution support"""
 try:
 import nest_asyncio
 nest_asyncio.apply()
@@ -114,7 +114,7 @@ Part 2: Data Classes and Models
 
 @dataclass
 class TokenSafety:
-“”“Token safety analysis results - FIXED VERSION”””
+    """Token safety analysis results - FIXED VERSION"""
 is_verified: bool = False
 risk_score: int = 75  # 0-100, lower is safer
 risk_factors: List[str] = field(default_factory=list)
@@ -137,11 +137,11 @@ def get_risk_level(self) -> str:
         return "MEDIUM"
     else:
         return "LOW"
-```
 
-@dataclass
+
+@dataclass  
 class TokenData:
-“”“Complete token analysis data - FIXED VERSION”””
+    """Complete token analysis data - FIXED VERSION"""
 contract_address: str
 symbol: str
 name: str
@@ -153,7 +153,7 @@ liquidity: float
 age_hours: float
 price_change_24h: float
 
-```
+
 # Safety analysis
 safety: TokenSafety
 
@@ -188,7 +188,7 @@ def to_dict(self) -> Dict:
 ```
 
 def validate_solana_address(address: str) -> bool:
-“”“Validate Solana contract address - FIXED VERSION”””
+    """Validate Solana contract address - FIXED VERSION"""
 if not address or not isinstance(address, str):
 return False
 
@@ -207,7 +207,7 @@ except Exception:
 ```
 
 def safe_float(value, default: float = 0.0) -> float:
-“”“Safely convert value to float”””
+    """Safely convert value to float"""
 try:
 if value is None:
 return default
@@ -216,7 +216,7 @@ except (ValueError, TypeError):
 return default
 
 def safe_int(value, default: int = 0) -> int:
-“”“Safely convert value to int”””
+    """Safely convert value to int"""
 try:
 if value is None:
 return default
@@ -225,7 +225,7 @@ except (ValueError, TypeError):
 return default
 
 def clean_string(value, max_length: int = 100) -> str:
-“”“Clean and limit string length”””
+    """Clean and limit string length"""
 try:
 if not value:
 return “Unknown”
@@ -252,7 +252,7 @@ Part 3: Working API Classes - FIXED VERSION
 “””
 
 class WorkingSafetyAnalyzer:
-“”“FIXED safety analyzer using working methods”””
+    """FIXED safety analyzer using working methods"""
 
 ```
 def __init__(self):
